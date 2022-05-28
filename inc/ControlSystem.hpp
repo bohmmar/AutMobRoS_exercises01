@@ -3,8 +3,11 @@
 
 #include <eeros/control/TimeDomain.hpp>
 #include <eeros/core/Executor.hpp>
-#include <eeros/control/Constant.hpp>
+#include <eeros/control/PeripheralInput.hpp>
 #include <eeros/control/Gain.hpp>
+#include <eeros/control/PeripheralOutput.hpp>
+#include <eeros/control/Saturation.hpp>
+//#include <eeros/control/Constant.hpp>
 
 using namespace eeros::control;
 
@@ -14,9 +17,17 @@ public:
     ControlSystem(double dt);
 
     // Define Blocks
-    Constant<> myConstant;
-    Gain<> myGain;
+    PeripheralInput<> q1;       // control exercise servo motor
+    Gain<> g;
+    PeripheralOutput<> servo;   // control exercise servo motor
+    PeripheralInput<> E2;       // for encoder exercise 1
 
+    PeripheralOutput<> M1;      // Ex2 Ang. Vel
+    Saturation<> qdMax;         // Ex2 Ang. Vel
+    Gain<> toRad;       // calculate to rad
+    Gain<> i;           // reduction ratio
+    Gain<> km;          // motor constant
+    
     TimeDomain timedomain;
 };
 

@@ -22,6 +22,7 @@ public:
           sleep("Sleep", this)
     {
         log.info() << "Sequence created: " << name;
+       
     }
 
     int action()
@@ -29,7 +30,10 @@ public:
         while (eeros::sequencer::Sequencer::running)
         {
             sleep(1.0);
-            log.info() << cs.myGain.getOut().getSignal();
+            log.info() << cs.g.getOut().getSignal();    // exercise servo motor control
+            log.info() << cs.E2.getOut().getSignal();   // exercise encoder control
+            log.info() <<  "The orientation around x is outside of the allowed range.";
+            log.info() << cs.qdMax.getOut().getSignal();
         }
         return 0;
     }
