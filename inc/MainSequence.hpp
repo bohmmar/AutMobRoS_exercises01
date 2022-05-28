@@ -7,6 +7,7 @@
 #include "MyRobotSafetyProperties.hpp"
 #include "ControlSystem.hpp"
 #include <eeros/sequencer/Wait.hpp>
+#include "customSteps/moveServoTo.hpp"
 
 class MainSequence : public eeros::sequencer::Sequence
 {
@@ -19,7 +20,8 @@ public:
           sp(sp),
           cs(cs),
 
-          sleep("Sleep", this)
+          sleep("Sleep", this),
+          moveServoTo("moveServoTo", this, cs)
     {
         log.info() << "Sequence created: " << name;
     }
@@ -28,8 +30,11 @@ public:
     {
         while (eeros::sequencer::Sequencer::running)
         {
+            moveServoTo(-0.5);
             sleep(1.0);
-            log.info() << cs.myGain.getOut().getSignal();
+            moveServoTo(0.5);
+            sleep(1.0);
+            
         }
         return 0;
     }
@@ -40,6 +45,7 @@ private:
     MyRobotSafetyProperties &sp;
 
     eeros::sequencer::Wait sleep;
+    MoveServoTo moveServoTo;
 };
 
 #endif // MAINSEQUENCE_HPP_
