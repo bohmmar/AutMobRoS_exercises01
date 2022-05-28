@@ -9,6 +9,7 @@
 #include <eeros/sequencer/Wait.hpp>
 #include "customSteps/moveServoTo.hpp"
 #include "customSequences/orientationException.hpp"
+#include <eeros/sequencer/Monitor.hpp>
 
 class MainSequence : public eeros::sequencer::Sequence
 {
@@ -25,8 +26,10 @@ public:
           moveServoTo("moveServoTo", this, cs),
 
           checkOrientation(0.1, cs),
-          orientationException("Orientation exception", this, cs, checkOrientation)
+          orientationException("Orientation exception", this, cs, checkOrientation),
+          orientationMonitor("Orientation monitor", this, checkOrientation, eeros::sequencer::SequenceProp::resume, &orientationException)
     {
+        addMonitor(&orientationMonitor);
         log.info() << "Sequence created: " << name;
     }
 
@@ -52,6 +55,7 @@ private:
     MoveServoTo moveServoTo;
     CheckOrientation checkOrientation;
     OrientationException orientationException;
+    eeros::sequencer::Monitor orientationMonitor;
 };
 
 #endif // MAINSEQUENCE_HPP_
