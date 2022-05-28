@@ -22,11 +22,12 @@ public:
     PeripheralOutput<> servo;   // control exercise servo motor
     PeripheralInput<> E2;       // for encoder exercise 1
 
-    PeripheralOutput<> M1;      // Ex2 Ang. Vel
-    Saturation<> qdMax;         // Ex2 Ang. Vel
-    Gain<> toRad;       // calculate to rad
+    PeripheralOutput<> M1;      // Ex3 Ang. Vel
+    Saturation<> QMax;         // Ex3 Ang. Vel
+    Gain<> Scale;       // calculate to rad
     Gain<> i;           // reduction ratio
     Gain<> km;          // motor constant
+    Gain<> R;           // resistance
     
     TimeDomain timedomain;
 };

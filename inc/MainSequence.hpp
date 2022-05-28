@@ -32,8 +32,8 @@ public:
             sleep(1.0);
             log.info() << cs.g.getOut().getSignal();    // exercise servo motor control
             log.info() << cs.E2.getOut().getSignal();   // exercise encoder control
-            log.info() <<  "The orientation around x is outside of the allowed range.";
-            log.info() << cs.qdMax.getOut().getSignal();
+            // log.info() <<  "The orientation around x is outside of the allowed range.";
+            log.info() << cs.QMax.getOut().getSignal();
         }
         return 0;
     }
