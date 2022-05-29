@@ -50,7 +50,7 @@ ControlSystem::ControlSystem(double dt)
 
     // Connect signals
 
-    e.getIn(0).connect(E1.getOut());
+    e.getIn(0).connect(E2.getOut());
     e.getIn(1).connect(E1.getOut());
     e.negateInput(1);
     kp.getIn().connect(e.getOut());
