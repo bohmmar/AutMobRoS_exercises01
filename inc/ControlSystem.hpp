@@ -22,10 +22,13 @@ public:
     PeripheralInput<> E1;
 
     Saturation<> QMax;         // Ex3 Ang. Vel
+    Saturation<> qmax;
     D<> ed;                     // Differentiator
+    D<> qd1;                     // Differentiator
 
     Sum<> e;
     Sum<> qdd;
+    Sum<> U1;
     
     Gain<> iInv;           // inverse reduction ratio
     Gain<> kmInv;          // inverse motor constant
@@ -33,6 +36,8 @@ public:
     Gain<> kp;          // proportional gain
     Gain<> kd;          // d Gain
     Gain<> M;
+    Gain<> km;
+    Gain<> i;
 
     PeripheralOutput<> M1;      // Ex3 Ang. Vel
     
