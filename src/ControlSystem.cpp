@@ -1,54 +1,86 @@
 #include "ControlSystem.hpp"
 
 ControlSystem::ControlSystem(double dt)
-    : q1("quat1"), g(2.0), servo("servo1"),         // exercise with servo motor
-      E2("enc2"), i(104.0/3441.0), Scale(0.03/2.0/3.141), QMax(0.1), km(1/8.44e-3), R(8), M1("motor1"),      // exercise encoder
-      timedomain("Main time domain", dt, true)
+    : 
+    E1("enc1"),
+    E2("enc2"),
+    kp(1.0/dt/4.4/0.7/dt/4.4/0.7),
+    kd(2.0*0.7/dt/4.4/0.7),
+    iInv(104.0/3441.0),
+    M(3441/104*3441/104*6.8e-8),
+    QMax(0.1),
+    kmInv(1/8.44e-3),
+    R(8),
+    M1("motor1"),      
+    timedomain("Main time domain", dt, true)
 {
     // Name all blocks
-    q1.setName("q1");       // exercise with servo motor
-    g.setName("g");         // exercise with servo motor
-    servo.setName("servo");     // exercise with servo motor
-    E2.setName("E2");           // exercise encoder
-    R.setName("R");             // Ex3 Torque
-    i.setName("i");             // Ex3 Torque
-    Scale.setName("Scale");     // Ex3 Torque
-    km.setName("km");           // Ex3 Torque
-    M1.setName("M1");           // Ex3 Torque
+
+    E2.setName("E2");          
+    E1.setName("E1");           
+    kp.setName("kp");
+    kd.setName("kd");
+    M.setName("M");
+    R.setName("R");            
+    iInv.setName("i");            
+    kmInv.setName("km");           
+    M1.setName("M1");          
+    qdd.setName("qdd");
+    e.setName("e");
+    ed.setName("ed");
+    M1.setName("M1");
+
 
     // Name all signals
-    q1.getOut().getSignal().setName("alpha/2");     // exercise with servo motor
-    g.getOut().getSignal().setName("alpha");        // exercise with servo motor
-    E2.getOut().getSignal().setName("q2[rad]");     // exercise encoder
-    Scale.getOut().getSignal().setName("Q1[Nm]");      // Ex3 Torque
-    i.getOut().getSignal().setName("T1[Nm]");       // Ex3 Torque
-    km.getOut().getSignal().setName("I1[A]");          // Ex3 Torque
-    QMax.getOut().getSignal().setName("Q1[Nm]");     // Ex3 Torque
-    R.getOut().getSignal().setName("U1[V]");            // Ex3 Torque
+
+    E1.getOut().getSignal().setName("q1[rad]");
+    E2.getOut().getSignal().setName("q2[rad]"); 
+    e.getOut().getSignal().setName("e[rad]");
+    kp.getOut().getSignal().setName("qdd_cp[rad/s^2]");
+    ed.getOut().getSignal().setName("ed [rad/s");
+    kd.getOut().getSignal().setName("qdd_cd[rad/s^2]");
+    qdd.getOut().getSignal().setName("qdd[rad/s^2]");
+    M.getOut().getSignal().setName("Q1[Nm]");
+    QMax.getOut().getSignal().setName("Q1[Nm]");     
+    iInv.getOut().getSignal().setName("T1[Nm]");       
+    kmInv.getOut().getSignal().setName("I1[A]");                
+    R.getOut().getSignal().setName("U1[V]");            
 
 
 
     // Connect signals
-    g.getIn().connect(q1.getOut());     // exercise with servo motor
-    servo.getIn().connect(g.getOut());      // exercise with servo motor
-    Scale.getIn().connect(E2.getOut());     // Ex3 Torque
-    QMax.getIn().connect(Scale.getOut());  // Ex3 Torque
-    i.getIn().connect(QMax.getOut());      // Ex3 Torque
-    km.getIn().connect(i.getOut());         // Ex3 Torque
-    R.getIn().connect(km.getOut());         // Ex3 Torque
-    M1.getIn().connect(R.getOut());        // Ex3 Torque
+
+    e.getIn(0).connect(E1.getOut());
+    e.getIn(1).connect(E1.getOut());
+    e.negateInput(1);
+    kp.getIn().connect(e.getOut());
+    ed.getIn().connect(e.getOut());
+    kd.getIn().connect(ed.getOut());
+    qdd.getIn(0).connect(kp.getOut());
+    qdd.getIn(1).connect(kd.getOut());
+    M.getIn().connect(qdd.getOut());
+    QMax.getIn().connect(M.getOut());
+    iInv.getIn().connect(QMax.getOut());      
+    kmInv.getIn().connect(iInv.getOut());         
+    R.getIn().connect(kmInv.getOut());         
+    M1.getIn().connect(R.getOut());        
     
 
     // Add blocks to timedomain
-    timedomain.addBlock(q1);        // exercise with servo motor
-    timedomain.addBlock(g);         // exercise with servo motor
-    timedomain.addBlock(servo);     // exercise with servo motor
-    timedomain.addBlock(E2);        // exercise encoder
-    timedomain.addBlock(QMax);     // Ex3 Torque
-    timedomain.addBlock(Scale);     // Ex3 Torque
-    timedomain.addBlock(i);         // Ex3 Torque
-    timedomain.addBlock(km);        // Ex3 Torque
-    timedomain.addBlock(R);        // Ex3 Torque
+
+    timedomain.addBlock(E1);
+    timedomain.addBlock(E2);
+    timedomain.addBlock(e);
+    timedomain.addBlock(kp);
+    timedomain.addBlock(ed);
+    timedomain.addBlock(kd);
+    timedomain.addBlock(qdd);
+    timedomain.addBlock(M);       
+    timedomain.addBlock(QMax);     
+    timedomain.addBlock(iInv);         
+    timedomain.addBlock(kmInv);       
+    timedomain.addBlock(R);  
+    timedomain.addBlock(M1);      
 
     // Add timedomain to executor
     eeros::Executor::instance().add(timedomain);

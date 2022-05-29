@@ -7,7 +7,8 @@
 #include <eeros/control/Gain.hpp>
 #include <eeros/control/PeripheralOutput.hpp>
 #include <eeros/control/Saturation.hpp>
-//#include <eeros/control/Constant.hpp>
+#include <eeros/control/D.hpp>
+#include <eeros/control/Sum.hpp>
 
 using namespace eeros::control;
 
@@ -17,17 +18,23 @@ public:
     ControlSystem(double dt);
 
     // Define Blocks
-    PeripheralInput<> q1;       // control exercise servo motor
-    Gain<> g;
-    PeripheralOutput<> servo;   // control exercise servo motor
     PeripheralInput<> E2;       // for encoder exercise 1
+    PeripheralInput<> E1;
+
+    Saturation<> QMax;         // Ex3 Ang. Vel
+    D<> ed;                     // Differentiator
+
+    Sum<> e;
+    Sum<> qdd;
+    
+    Gain<> iInv;           // inverse reduction ratio
+    Gain<> kmInv;          // inverse motor constant
+    Gain<> R;           // resistance
+    Gain<> kp;          // proportional gain
+    Gain<> kd;          // d Gain
+    Gain<> M;
 
     PeripheralOutput<> M1;      // Ex3 Ang. Vel
-    Saturation<> QMax;         // Ex3 Ang. Vel
-    Gain<> Scale;       // calculate to rad
-    Gain<> i;           // reduction ratio
-    Gain<> km;          // motor constant
-    Gain<> R;           // resistance
     
     TimeDomain timedomain;
 };

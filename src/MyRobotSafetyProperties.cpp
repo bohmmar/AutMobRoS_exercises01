@@ -131,24 +131,12 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
     });
 
     slSystemOn.setLevelAction([&, dt](SafetyContext *privateContext) {
-        if (slSystemOn.getNofActivations()*dt >= 1)   // wait 1 sec
-        {
-            privateContext->triggerEvent(powerOn);
-        }
     });
 
     slMotorPowerOn.setLevelAction([&, dt](SafetyContext *privateContext) {
-        if (slMotorPowerOn.getNofActivations()*dt >= 5)   // wait 5 sec
-        {
-            privateContext->triggerEvent(startMoving);
-        }
     });
 
     slSystemMoving.setLevelAction([&, dt](SafetyContext *privateContext) {
-        if (slSystemMoving.getNofActivations()*dt >= 5)   // wait 5 sec
-        {
-            privateContext->triggerEvent(stopMoving);
-        }
     });
 
     // Define entry level
