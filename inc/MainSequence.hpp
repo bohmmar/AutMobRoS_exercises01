@@ -31,6 +31,7 @@ public:
         {
             sleep(1.0);
             log.info() << cs.QMax.getOut().getSignal();
+            log.info() << cs.qmax.getOut().getSignal();
         }
         return 0;
     }
