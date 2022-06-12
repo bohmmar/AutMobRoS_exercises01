@@ -22,7 +22,7 @@ public:
     // Define Blocks
     PeripheralInput<> E1, E2;
 
-    D<eeros::math::Vector2> ed;                     // Differentiator
+    D<eeros::math::Vector2> Ed;                     // Differentiator
     Mux<2> E;
     FwKinOdom fwKinOdom;
     
