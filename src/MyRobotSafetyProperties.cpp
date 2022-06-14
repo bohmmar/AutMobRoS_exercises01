@@ -119,11 +119,13 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
     slStartingUp.setLevelAction([&](SafetyContext *privateContext) {
         cs.timedomain.start();
         cs.fwKinOdom.enable();
+        cs.controller.enable();
         privateContext->triggerEvent(systemStarted);
     });
 
     slEmergency.setLevelAction([&](SafetyContext *privateContext) {
         cs.fwKinOdom.disable();
+        cs.controller.disable();
     });
 
     slEmergencyBraking.setLevelAction([&](SafetyContext *privateContext) {
@@ -133,14 +135,17 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
 
     slSystemOn.setLevelAction([&, dt](SafetyContext *privateContext) {
         cs.fwKinOdom.enable();
+        cs.controller.enable();
     });
 
     slMotorPowerOn.setLevelAction([&, dt](SafetyContext *privateContext) {
         cs.fwKinOdom.enable();
+        cs.controller.enable();
     });
 
     slSystemMoving.setLevelAction([&, dt](SafetyContext *privateContext) {
         cs.fwKinOdom.enable();
+        cs.controller.enable();
     });
 
     // Define entry level
