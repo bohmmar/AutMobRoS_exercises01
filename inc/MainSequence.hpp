@@ -7,7 +7,7 @@
 #include "MyRobotSafetyProperties.hpp"
 #include "ControlSystem.hpp"
 #include <eeros/sequencer/Wait.hpp>
-#include <assert.h>
+#include "customSteps/MoveTo.hpp"
 
 class MainSequence : public eeros::sequencer::Sequence
 {
@@ -20,19 +20,27 @@ public:
           sp(sp),
           cs(cs),
 
-          sleep("Sleep", this)
+          sleep("Sleep", this),
+          moveTo("Move to", this, cs)
     {
-        log.info() << "Sequence created: " << name;
-       
+        log.info() << "Sequence created: " << name;  
     }
 
     int action()
     {
+        while (eeros::sequencer::Sequencer::running && ss.getCurrentLevel() < sp.slMotorPowerOn)
+            ; // Wait for safety system to get into slMotorPowerOn
         while (eeros::sequencer::Sequencer::running)
-       {
+        {
             sleep(1.0);
-            log.info() << cs.g.getOut().getSignal();
-       }
+            moveTo(0.5, 0.0, 0.0);
+            sleep(1.0);
+            moveTo(0.5, 0.5, M_PI / 2.0);
+            sleep(1.0);
+            moveTo(0.0, 0.5, M_PI);
+            sleep(1.0);
+            moveTo(0.0, 0.0, 0.0);
+        }
         return 0;
     }
 
@@ -42,6 +50,7 @@ private:
     MyRobotSafetyProperties &sp;
 
     eeros::sequencer::Wait sleep;
+    MoveTo moveTo;
 };
 
 #endif // MAINSEQUENCE_HPP_

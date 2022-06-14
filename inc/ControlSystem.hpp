@@ -4,15 +4,18 @@
 #include <eeros/control/TimeDomain.hpp>
 #include <eeros/core/Executor.hpp>
 #include <eeros/control/PeripheralInput.hpp>
+#include <eeros/control/Mux.hpp>
 #include <eeros/control/D.hpp>
 #include "customBlocks/FwKinOdom.hpp"
+#include "customBlocks/PathPlanner.hpp"
+#include "customBlocks/InvKin.hpp"
 #include "customBlocks/Controller.hpp"
 #include "customBlocks/InvMotMod.hpp"
-#include <eeros/control/Mux.hpp>
 #include <eeros/control/DeMux.hpp>
-#include <eeros/control/Constant.hpp>
-#include "customBlocks/InvKin.hpp"
 #include <eeros/control/PeripheralOutput.hpp>
+#include "AutMobRosConstants.hpp"
+
+
 
 using namespace eeros::control;
 
@@ -23,17 +26,15 @@ public:
 
     // Define Blocks
     PeripheralInput<> E1, E2;
-
     D<eeros::math::Vector2> Ed;                     // Differentiator
     Mux<2> E;
     FwKinOdom fwKinOdom;
-    Constant<> RvRx, omegaR;
+    PathPlanner pp;
     InvKin invKin;
-    D<> E1d;
-    Gain<> g;
-    Controller<> controller;
-    InvMotMod<> invMotMod;
-    PeripheralOutput<> M1;
+    Controller<eeros::math::Vector2> cont;
+    InvMotMod<eeros::math::Vector2> invMotMod;
+    DeMux<2> M;
+    PeripheralOutput<> M1,M2;
     
     TimeDomain timedomain;
 };

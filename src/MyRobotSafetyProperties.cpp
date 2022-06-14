@@ -107,45 +107,73 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
     });
 
     slShuttingDown.setLevelAction([&](SafetyContext *privateContext) {
+        cs.fwKinOdom.disable();
+        cs.cont.disable();
+        cs.pp.disable();
         cs.timedomain.stop();
         privateContext->triggerEvent(shutdown);
     });
 
     slBraking.setLevelAction([&](SafetyContext *privateContext) {
         // Check if motors are standing sill
+        cs.fwKinOdom.enable();
+        cs.cont.enable();
+        cs.pp.disable();
+        if (abs(cs.Ed.getOut().getSignal().getValue()(0)) < 1e-3 && abs(cs.Ed.getOut().getSignal().getValue()(1)) < 1e-3)
+        {
         privateContext->triggerEvent(motorsHalted);
+        }
     });
 
     slStartingUp.setLevelAction([&](SafetyContext *privateContext) {
-        cs.timedomain.start();
         cs.fwKinOdom.enable();
-        cs.controller.enable();
+        cs.cont.enable();
+        cs.pp.disable();
+        cs.timedomain.start();
         privateContext->triggerEvent(systemStarted);
     });
 
     slEmergency.setLevelAction([&](SafetyContext *privateContext) {
-        cs.fwKinOdom.disable();
-        cs.controller.disable();
+        cs.fwKinOdom.enable();
+        cs.cont.enable();
+        cs.pp.disable();
     });
 
     slEmergencyBraking.setLevelAction([&](SafetyContext *privateContext) {
         // Check if motors are standing still
-        privateContext->triggerEvent(motorsHalted);
+        cs.fwKinOdom.enable();
+        cs.cont.enable();
+        cs.pp.disable();
+        if (abs(cs.Ed.getOut().getSignal().getValue()(0)) < 1e-3 && abs(cs.Ed.getOut().getSignal().getValue()(1)) < 1e-3)
+        {
+            privateContext->triggerEvent(motorsHalted);
+        }
     });
 
     slSystemOn.setLevelAction([&, dt](SafetyContext *privateContext) {
         cs.fwKinOdom.enable();
-        cs.controller.enable();
+        cs.cont.enable();
+        cs.pp.disable();
     });
 
     slMotorPowerOn.setLevelAction([&, dt](SafetyContext *privateContext) {
         cs.fwKinOdom.enable();
-        cs.controller.enable();
+        cs.cont.enable();
+        cs.pp.enable();
+        if (abs(cs.Ed.getOut().getSignal().getValue()(0)) > 1e-1 || abs(cs.Ed.getOut().getSignal().getValue()(1)) > 1e-1)
+        {
+            privateContext->triggerEvent(startMoving);
+        }
     });
 
     slSystemMoving.setLevelAction([&, dt](SafetyContext *privateContext) {
         cs.fwKinOdom.enable();
-        cs.controller.enable();
+        cs.cont.enable();
+        cs.pp.enable();
+        if (abs(cs.Ed.getOut().getSignal().getValue()(0)) < 1e-3 && abs(cs.Ed.getOut().getSignal().getValue()(1)) < 1e-3)
+        {
+            privateContext->triggerEvent(stopMoving);
+        }
     });
 
     // Define entry level
